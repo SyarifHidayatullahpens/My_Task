@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Departement;
+use App\Models\Company;
 
 class RegisterController extends Controller
 {
@@ -41,6 +43,14 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    public function showRegistrationForm()
+    {
+        $companys = Company::all();
+        $departements = Departement::all();
+
+        return view('auth.register', compact(['companys', 'departements']));
+    }
+
     /**
      * Get a validator for an incoming registration request.
      *
@@ -50,9 +60,14 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'first_name' => ['required', 'string', 'max:50'],
+            'last_name' => ['required', 'string', 'max:50'],
+            'phone' => ['required', 'numeric', 'digits_between:10,12'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'company' => ['required', 'not_in:0'],
+            'departement' => ['required', 'not_in:0'],
         ]);
     }
 
@@ -65,9 +80,14 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
+            'username' => $data['username'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone' => $data['phone'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'company_id' => $data['company'],
+            'departement_id' => $data['departement'],
         ]);
     }
 }

@@ -16,11 +16,14 @@ use App\Http\Controllers\UserController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts2.index');
 });
 
 Auth::routes();
 
+Route::get('/main', function() {
+    return view('layouts.main');
+});
 
 Route::middleware(['auth'])->group(function () {
  

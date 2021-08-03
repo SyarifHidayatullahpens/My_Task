@@ -54,21 +54,65 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Company Name</label>
-                            <select class="form-control" name="jbook_id" id="dbooks" required>
-                                <option value=""> Pilih </option>
-                                @foreach($datas as $data)
-                                    <option value="{{ $dbook->id}}"> {{ $dbook->jenis_buku}}</option>
-                                @endforeach
-                            </select>
+                        <div class="form-group row">
+                            <label for="select_company" class="col-md-4 col-form-label text-md-right">{{ __('Select Company') }}</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control @error('company') is-invalid @enderror" name="company" id="select_company" required>
+                                    <option value="">Select</option>
+                                    @foreach($companys as $company)
+                                        <option value="{{$company->id}}">{{$company->nama}}</option>
+                                    @endforeach
+                                </select>
+
+                                @error('company')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label for="select_departement" class="col-md-4 col-form-label text-md-right">{{ __('Select Departement') }}</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control @error('departement') is-invalid @enderror" name="departement" id="select_departement" required>
+                                    <option value="">Select</option>
+                                    @foreach($departements as $departement)
+                                        <option value="{{$departement->id}}">{{$departement->name}}</option>
+                                    @endforeach
+                                </select>
+
+                                @error('departement')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="phone" class="col-md-4 col-form-label text-md-right">{{ __('Phone') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror"
+                                 name="phone" value="{{ old('phone') }}" required autocomplete="phone">
+
+                                @error('phone')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
                         
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" username="email" value="{{ old('email') }}" required autocomplete="email">
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
