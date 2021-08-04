@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DepartementController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
  
     Route::middleware(['admin'])->group(function () {
         Route::get('admin', [AdminController::class, 'index']);
+        Route::resource('admin/company', CompanyController::class);
+        
     });
  
     Route::middleware(['user'])->group(function () {
@@ -39,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
  
     Route::get('/logout', function() {
         Auth::logout();
-        redirect('/');
+        return redirect('/');
     });
  
 });
