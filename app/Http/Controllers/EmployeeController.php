@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
+use App\Models\Departement;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-class UserController extends Controller
+class EmployeeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +16,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::all();
-        return view('user.home', compact('user'));
+        $datas = User::all();
+        
+        // dd($datas);
+        return view('admin.user.index_user', compact('datas'));
     }
 
     /**
@@ -26,7 +29,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        // $employee = Models
     }
 
     /**

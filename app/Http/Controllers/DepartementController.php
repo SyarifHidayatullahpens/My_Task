@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Departement;
+use Illuminate\Support\Facades\DB;
+
 
 class DepartementController extends Controller
 {
@@ -14,7 +16,7 @@ class DepartementController extends Controller
      */
     public function index()
     {
-       $datas = Departement::all();
+       $datas = DB::table('departements')->paginate(10);
        return view ('admin.departement.index_departement', compact('datas'));
     }
 
@@ -25,7 +27,7 @@ class DepartementController extends Controller
      */
     public function create()
     {
-       return view('admin.departement.index_departement');
+       return view('admin.departement.create_departement');
     }
 
     /**
@@ -43,9 +45,9 @@ class DepartementController extends Controller
         $data   = $request->all();
         $depart  = Departement::create($data);
         if($depart) {
-            return redirect()->route('departement.index_departement')->with('success','Item created successfully!');
+            return redirect()->route('departement.index')->with('success','Item created successfully!');
         }else{
-            return redirect()->route('departement.index_departements')->with('error','You have no permission for this page!');
+            return redirect()->route('departement.index')->with('error','You have no permission for this page!');
         }
     }
 
@@ -91,9 +93,9 @@ class DepartementController extends Controller
         $data = $request->all();
         $depart->update($data);
         if($depart){
-         return redirect()->route('admin.departement.index_departement')->with('info','You added new items');
+         return redirect()->route('departement.index')->with('info','You added new items');
          }else{
-             return redirect()->route('admin.departement.index_departement')->with('error','You have no permission for this page!');
+             return redirect()->route('departement.index')->with('error','You have no permission for this page!');
          }
     }
 
@@ -103,11 +105,12 @@ class DepartementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Departement $departement)
     {
-       $depart = Departement::findOrFail($id);
-       $depart->delete();
-       return redirect('admin.departement.index_departement')->redirect('success','Book  Type deleted successfully');
+       Departement::destroy($departement);
+    //    dd($depart);
+    //    $depart->delete();
+       return redirect()->route('departement.index')->with('success','Deleted successfully');
 
     }
 }

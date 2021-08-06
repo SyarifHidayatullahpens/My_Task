@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DepartementController;
 /*
@@ -35,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('admin', [AdminController::class, 'index']);
         Route::resource('admin/company', CompanyController::class);
         Route::resource('admin/departement', DepartementController::class);
+        Route::resource('admin/user', EmployeeController::class);
         
     });
  

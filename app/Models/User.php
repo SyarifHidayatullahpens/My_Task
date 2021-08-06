@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Departement;
+use App\Models\Company;
 
 class User extends Authenticatable
 {
@@ -46,4 +48,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public  function company() {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function departement(){
+        return $this->belongsTo(Departement::class);
+    }
+
+   
 }

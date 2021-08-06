@@ -32,10 +32,10 @@
                                             <td>{{ $data->nama }}</td>
                                             <td>{{ $data->email }}</td>
                                             <td>{{ $data->logo }}</td>
-                                            <td>{{ $data->website_url }}</td>
+                                            <td><a href="{{$data->website_url}}">{{ $data->website_url }}</a></td>
                                             <td>
-                                            <a href="{{route('company.edit',[$data->id])}}" type="submit" class="btn btn-primary"><span class="fas fa-edit">Edit</a>
-                                                <a href="#" type="button" class="btn btn-danger" onclick= "return confirm('Apakah anda ingin menghapus item.?');"><span class="fas fa-trash-alt">Delate</a>
+                                            <a href="{{route('company.edit',[$data->id])}}" type="submit" class="btn btn-primary"><span class="fas fa-edit"></a>
+                                                <a href="#" type="button" class="btn btn-danger" onclick= "return confirm('Apakah anda ingin menghapus item.?');"><span class="fas fa-trash-alt"></a>
                                             </td>
                                         </tr>
                                         @empty

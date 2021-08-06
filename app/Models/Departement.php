@@ -10,5 +10,6 @@ class Departement extends Model
     use HasFactory;
 
     protected $table = 'departements';
-    protected $fillable = ['name', 'descriptioin']; 
+    protected $fillable = ['name', 'description']; 
+
 }
