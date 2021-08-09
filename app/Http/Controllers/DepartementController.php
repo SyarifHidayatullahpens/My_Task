@@ -16,7 +16,7 @@ class DepartementController extends Controller
      */
     public function index()
     {
-       $datas = DB::table('departements')->paginate(10);
+       $datas = DB::table('departements')->get();
        return view ('admin.departement.index_departement', compact('datas'));
     }
 
@@ -39,7 +39,7 @@ class DepartementController extends Controller
     public function store(Request $request)
     {
          $request->validate([
-            'name'    => 'required',
+            'name'    => 'required|min:3',
             'description' => 'required',
         ]);
         $data   = $request->all();
@@ -59,8 +59,7 @@ class DepartementController extends Controller
      */
     public function show($id)
     {
-       $data = Departement::findOrFail($id);
-       return view ('admin.departement.show_departement',compact('data'));
+       
     }
 
     /**
@@ -85,7 +84,7 @@ class DepartementController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|min:3',
             'description'   => 'required',
         ]);
 
@@ -108,9 +107,9 @@ class DepartementController extends Controller
     public function destroy(Departement $departement)
     {
        Departement::destroy($departement);
-    //    dd($depart);
-    //    $depart->delete();
        return redirect()->route('departement.index')->with('success','Deleted successfully');
 
     }
+
+    
 }

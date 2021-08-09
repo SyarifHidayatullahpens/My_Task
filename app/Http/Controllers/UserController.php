@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
+use App\Models\Departement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -15,8 +18,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::all();
-        return view('user.home', compact('user'));
+        $datas = User::all();
+        return view('admin.user.index_user', compact('datas'));
     }
 
     /**
@@ -26,7 +29,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.user.create_user');
     }
 
     /**
@@ -37,7 +40,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'first_name'    => 'required|string|max:50',
+            'last_name'    => 'required|string|max:50',
+            'username'     => 'required',
+            'email'        => 'required',
+            'company_id'   => 'required',
+            'departement'  =>  'required',
+            'role'         =>  'required',
+        ]);
+        $data = $request->all();
+        $users  = User::create($data);
+        if($users) {
+            return redirect()->route('user.index')->with('success','Item created successfully!');
+        }else{
+            return redirect()->route('user.index')->with('error','You have no permission for this page!');
+        }
     }
 
     /**
@@ -48,7 +66,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -59,7 +77,10 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = User::findOrFail($id);
+        $cek = Departement::all();
+        $check = Company::all();
+        return view('admin.user.edit_user',compact('data','cek','check'));
     }
 
     /**
@@ -71,7 +92,25 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'first_name'    => 'required||string|max:50',
+            'last_name'    => 'required||string|max:50',
+            'username'     => 'required|string',
+            'email'        => 'required|',
+            'password'     => 'required',
+            'company_id'   => 'required',
+            'departement'  =>  'required',
+            'role'         =>  'required',
+        ]);
+
+        $users = User::findOrFail($id);
+        $data = $request->all();
+        $users->update($data);
+        if($users){
+         return redirect()->route('user.index')->with('info','You added new items');
+         }else{
+             return redirect()->route('user.index')->with('error','You have no permission for this page!');
+         }
     }
 
     /**
@@ -80,8 +119,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $employee)
     {
-        //
+        User::destroy($employee);
+        return redirect()->route('user.index')->with('success','Deleted successfully');
     }
 }
