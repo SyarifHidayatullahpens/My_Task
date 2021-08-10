@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -40,17 +41,26 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'email' => 'required',
-            'logo' => 'required',
+            'nama' => 'required|string|min:5',
+            'email' => 'required|email',
+            'logo' => 'required|file|image|mimes:png,jpg,jpeg|max:2048|dimensions:min_width=100,min_height=100',
             'website_url' => 'required',
         ]);
-        $data   = $request->all();
-        $company = Company::create($data);
-        if($company) {
-            return redirect()->route('company.index_company')->with('success','Item created successfully!');
+
+        $logo = $request->file('logo');
+        $logo->storeAs('public/path', $logo->hashName());
+
+        $data = Company::create([
+            'nama'          => $request->nama,
+            'email'         => $request->email,
+            'logo'          => $logo->hashName(),
+            'website_url'   => $request->website_url,
+        ]);
+
+        if($data) {
+            return redirect()->route('company.index')->with('success','Data created successfully!');
         }else{
-            return redirect()->route('company.index_companys')->with('error','You have no permission for this page!');
+            return redirect()->route('company.index')->with('error','You have no permission for this page!');
         }
     }
 
@@ -87,18 +97,40 @@ class CompanyController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required',
-            'email' => 'required',
-            'logo' => 'required',
+            'nama' => 'required|string|min:5',
+            'email' => 'required|email',
+            'logo' => 'required|file|image|mimes:png,jpg,jpeg|max:2048|dimensions:min_width=100,min_height=100',
             'website_url' => 'required',
         ]);
         $company = Company::findOrFail($id);
-        $data   = $request->all();
-        $company->update($data);
+
+        if($request->file('logo') == "") 
+        {
+            $company->update([
+                'nama'           => $request->nama,
+                'email'          => $request->email,
+                'website_url'    => $request->website_url,
+            ]);
+    
+        } else {
+            Storage::disk('local')->delete('public/path/'.$company->image);
+    
+            //upload new image
+            $logo = $request->file('logo');
+            $logo->storeAs('public/path', $logo->hashName());
+    
+            $company->update([
+                'nama'           => $request->nama,
+                'email'          => $request->email,
+                'logo'           => $logo->hashName(),
+                'website_url'    => $request->website_url,
+                
+            ]);
+        }
         if($company) {
-            return redirect()->route('company.index_company')->with('success','Item created successfully!');
+            return redirect()->route('company.index')->with('success','Item created successfully!');
         }else{
-            return redirect()->route('company.index_companys')->with('error','You have no permission for this page!');
+            return redirect()->route('company.index')->with('error','You have no permission for this page!');
         }
     }
 
@@ -110,8 +142,8 @@ class CompanyController extends Controller
      */
     public function destroy($id)
     {
-       $company = Company::findOrFail($id);
-       $company->delete();
-       return redirect('admin.company.index_company')->redirect('success','Item  Type deleted successfully');
+        $company = Company::findOrFail($id);
+        $company->delete();
+        return redirect()->route('company.index')->with('success','Deleted successfully');
     }
 }

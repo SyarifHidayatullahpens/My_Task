@@ -30,7 +30,7 @@
                                                     <th scope="row">{{$loop->iteration}}</th>
                                                         <td>{{ $data->name }}</td>
                                                         <td>{{ $data->description }}</td>
-                                                        <td class="col-2">
+                                                        <td class="col-2 ">
                                                         <a href="{{route('departement.edit',[$data->id])}}" type="submit" class="d-inline btn btn-primary"><span class="fas fa-edit"></a>
                                                         <form action="{{ route('departement.destroy', [$data->id]) }}" method="POST" class="d-inline ">
                                                             @csrf

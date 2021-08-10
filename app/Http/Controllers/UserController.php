@@ -28,8 +28,10 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        return view('admin.user.create_user');
+    {   
+        $companys = Company::select('id','nama')->get();
+        $departements = Departement::select('id','name')->get();
+        return view('admin.user.create_user',compact('companys','departements'));
     }
 
     /**
@@ -41,17 +43,20 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name'    => 'required|string|max:50',
-            'last_name'    => 'required|string|max:50',
-            'username'     => 'required',
-            'email'        => 'required',
-            'company_id'   => 'required',
-            'departement'  =>  'required',
-            'role'         =>  'required',
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'first_name' => ['required', 'string', 'max:50'],
+            'last_name' => ['required', 'string', 'max:50'],
+            'phone' => ['required', 'numeric', 'digits_between:10,12'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'company_id' => ['required', 'not_in:0'],
+            'departement_id' => ['required', 'not_in:0'],
         ]);
-        $data = $request->all();
-        $users  = User::create($data);
-        if($users) {
+
+        $user['password'] = hash::make($request->password);
+
+        User::create($user);
+        if($user) {
             return redirect()->route('user.index')->with('success','Item created successfully!');
         }else{
             return redirect()->route('user.index')->with('error','You have no permission for this page!');
@@ -66,7 +71,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        
+        $data = User::findOrFail($id);
+        return view('admin.user.show_user',compact('data'));
     }
 
     /**
@@ -93,14 +99,14 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'first_name'    => 'required||string|max:50',
-            'last_name'    => 'required||string|max:50',
-            'username'     => 'required|string',
-            'email'        => 'required|',
-            'password'     => 'required',
-            'company_id'   => 'required',
-            'departement'  =>  'required',
-            'role'         =>  'required',
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'first_name' => ['required', 'string', 'max:50'],
+            'last_name' => ['required', 'string', 'max:50'],
+            'phone' => ['required', 'numeric', 'digits_between:10,12'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'company_id' => ['required', 'not_in:0'],
+            'departement_id' => ['required', 'not_in:0'],
         ]);
 
         $users = User::findOrFail($id);
@@ -119,9 +125,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $employee)
+    public function destroy($id)
     {
-        User::destroy($employee);
+        $users = User::findOrFail($id);
+        $users->delete();
         return redirect()->route('user.index')->with('success','Deleted successfully');
     }
 }

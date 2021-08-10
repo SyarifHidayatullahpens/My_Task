@@ -104,9 +104,10 @@ class DepartementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Departement $departement)
+    public function destroy($id)
     {
-       Departement::destroy($departement);
+       $depart = Departement::findOrFail($id);
+       $depart->delete();
        return redirect()->route('departement.index')->with('success','Deleted successfully');
 
     }

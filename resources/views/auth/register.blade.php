@@ -83,7 +83,6 @@
                                         <option value="{{$departement->id}}">{{$departement->name}}</option>
                                     @endforeach
                                 </select>
-
                                 @error('departement')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
