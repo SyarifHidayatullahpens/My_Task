@@ -92,7 +92,7 @@ class DepartementController extends Controller
         $data = $request->all();
         $depart->update($data);
         if($depart){
-         return redirect()->route('departement.index')->with('info','You added new items');
+         return redirect()->route('departement.index')->with('info','You added new data');
          }else{
              return redirect()->route('departement.index')->with('error','You have no permission for this page!');
          }

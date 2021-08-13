@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Departement;
 use App\Models\User;
+use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
+
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -18,8 +22,19 @@ class UserController extends Controller
      */
     public function index()
     {
-        $datas = User::all();
-        return view('admin.user.index_user', compact('datas'));
+
+        $user = Auth::user();
+        if ($user->role == 'admin'){
+            $datas      = User::all();  
+            $companyCount    = Company::count();
+            $departementCount = Departement::count();
+            $employeeCount  = User::count();
+
+            return view('admin.user.index_user', compact(
+                'datas','companyCount','departementCount','employeeCount',
+            ));
+        }
+        return view('user.index');
     }
 
     /**
@@ -42,7 +57,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $user = $request->validate([
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
@@ -57,7 +72,7 @@ class UserController extends Controller
 
         User::create($user);
         if($user) {
-            return redirect()->route('user.index')->with('success','Item created successfully!');
+            return redirect()->route('user.index')->with('success','Data created successfully!');
         }else{
             return redirect()->route('user.index')->with('error','You have no permission for this page!');
         }
@@ -84,9 +99,10 @@ class UserController extends Controller
     public function edit($id)
     {
         $data = User::findOrFail($id);
-        $cek = Departement::all();
-        $check = Company::all();
-        return view('admin.user.edit_user',compact('data','cek','check'));
+        $companys = Company::select('id','nama')->get();
+        $departements = Departement::select('id','name')->get();
+
+        return view('admin.user.edit_user',compact('data','companys','departements'));
     }
 
     /**
@@ -97,23 +113,24 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:users'],
+    {   
+
+        $user = $request->validate([
+            'username' => ['required', 'string', 'max:255'],
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
             'phone' => ['required', 'numeric', 'digits_between:10,12'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'company_id' => ['required', 'not_in:0'],
             'departement_id' => ['required', 'not_in:0'],
         ]);
 
-        $users = User::findOrFail($id);
-        $data = $request->all();
-        $users->update($data);
-        if($users){
-         return redirect()->route('user.index')->with('info','You added new items');
+        $user['password'] = hash::make($request->password);
+
+        $employee = User::findOrFail($id);
+        $employee->update($user);
+        if($user){
+         return redirect()->route('user.index')->with('info','You added new data');
          }else{
              return redirect()->route('user.index')->with('error','You have no permission for this page!');
          }
@@ -129,6 +146,6 @@ class UserController extends Controller
     {
         $users = User::findOrFail($id);
         $users->delete();
-        return redirect()->route('user.index')->with('success','Deleted successfully');
+        return redirect()->route('user.index')->with('success','Deleted data successfully');
     }
 }

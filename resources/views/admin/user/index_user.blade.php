@@ -6,7 +6,7 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <div></div>
         <a href="{{ route('user.create') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50"></i> Add Company</a>
+            <i class="fas fa-plus fa-sm text-white-50"></i> Add User</a>
     </div>
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -35,7 +35,12 @@
                                             <td>{{ $data->departement->name }}</td>
                                             <td>
                                             <a href="{{route('user.edit',[$data->id])}}" type="submit"  class="btn btn-primary ml-2" ><span class="fas fa-edit"></a>
-                                            <a href="#" type="button" class=" btn btn-danger"  onclick= "return confirm('Apakah anda ingin menghapus item.?');"><span class="fas fa-trash-alt"></a>
+                                            <form action="{{ route('user.destroy', [$data->id]) }}" method="POST" class="d-inline ">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class=" btn btn-danger"  onclick= "return confirm('Apakah anda ingin menghapus item.?'); event.preventDefault();
+                                            document.getElementById('delete-item').submit();"><span class="fas fa-trash-alt"></button>
+                                            </form>
                                             <a href="{{route('user.show',[$data->id])}}" type="submit" class=" btn btn-info"><span class="fas fa-eye"></a>
                                         </td>
                                         </tr>

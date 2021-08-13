@@ -40,14 +40,16 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
-            'nama' => 'required|string|min:5',
-            'email' => 'required|email',
-            'logo' => 'required|file|image|mimes:png,jpg,jpeg|max:2048|dimensions:min_width=100,min_height=100',
-            'website_url' => 'required',
+            'nama' => 'required|string|min:5|unique:companys',
+            'email' => 'required|email|unique:companys',
+            'logo' => 'file|image|mimes:png,jpg,jpeg|max:2048|dimensions:min_width=100,min_height=100',
+            'website_url' => 'required|url',
         ]);
 
         $logo = $request->file('logo');
+        if($logo)
         $logo->storeAs('public/path', $logo->hashName());
 
         $data = Company::create([
@@ -96,13 +98,14 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama' => 'required|string|min:5',
-            'email' => 'required|email',
-            'logo' => 'required|file|image|mimes:png,jpg,jpeg|max:2048|dimensions:min_width=100,min_height=100',
-            'website_url' => 'required',
-        ]);
         $company = Company::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string|min:5|unique:companys,nama,'.$company->id,
+            'email' => 'required|email|unique:companys,email,'.$company->id,
+            'logo' => 'file|image|mimes:png,jpg,jpeg|max:2048|dimensions:min_width=100,min_height=100',
+            'website_url' => 'required|url',
+        ]);
 
         if($request->file('logo') == "") 
         {
@@ -128,7 +131,7 @@ class CompanyController extends Controller
             ]);
         }
         if($company) {
-            return redirect()->route('company.index')->with('success','Item created successfully!');
+            return redirect()->route('company.index')->with('info','You added new data');
         }else{
             return redirect()->route('company.index')->with('error','You have no permission for this page!');
         }
@@ -144,6 +147,6 @@ class CompanyController extends Controller
     {
         $company = Company::findOrFail($id);
         $company->delete();
-        return redirect()->route('company.index')->with('success','Deleted successfully');
+        return redirect()->route('company.index')->with('success','Deleted Data successfully');
     }
 }

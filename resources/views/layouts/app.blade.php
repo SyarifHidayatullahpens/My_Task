@@ -78,11 +78,6 @@
 
         <main class="py-4">
             @yield('content')
-                <div class="row">
-                    <div class="col-md-4">
-                        @include('flash-message')
-                    </div>
-                </div>
         </main>
     </div>
 </body>

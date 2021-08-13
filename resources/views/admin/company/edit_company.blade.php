@@ -10,13 +10,23 @@
 </style>
 
 @section('content')
+@if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Edit Company</h6>
     </div>
     <div class="card-body">
-        <form method="POST" action="{{route('company.store')}}" enctype="multipart/form-data">
+        <form method="POST" action="{{route('company.update',[$data->id])}}" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="mb-2">
                 <label for="exampleFormControlInput1" class="form-label">Name</label>
                 <input type="text" name="nama" class="form-control" id="nama" value="{{$data->nama}}">
@@ -29,6 +39,7 @@
                 <div class="form-group">
                     <label for="exampleFormControlFile1">File</label>
                     <input type="file" id="logo" name="logo" class="form-control @error('logo') is-invalid @enderror" value="{{ old('logo') }}">
+                    {{ $data->logo }}
                 </div>
             </div>
             <div class="mb-2">
